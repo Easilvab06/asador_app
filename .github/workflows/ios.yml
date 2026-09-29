@@ -1,0 +1,43 @@
+name: Build iOS
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Generar plataformas
+        run: flutter create . --org com.kanka --project-name asador --platforms android,ios
+
+      - name: Permisos Bluetooth y nombre
+        run: |
+          P=ios/Runner/Info.plist
+          plutil -replace NSBluetoothAlwaysUsageDescription -string "Asador usa Bluetooth para conectarse al asador y controlar la velocidad y el sentido del motor." $P
+          plutil -replace NSBluetoothPeripheralUsageDescription -string "Asador usa Bluetooth para conectarse al asador y controlar el motor." $P
+          plutil -replace CFBundleDisplayName -string "Asador" $P
+
+      - run: flutter pub get
+
+      - name: Analizar (informativo)
+        run: flutter analyze --no-fatal-infos --no-fatal-warnings || true
+
+      - name: Compilar iOS sin firma
+        run: flutter build ios --release --no-codesign
+
+      - name: Crear IPA
+        run: |
+          mkdir Payload
+          cp -R build/ios/iphoneos/Runner.app Payload/
+          zip -qr asador.ipa Payload
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: asador-ipa
+          path: asador.ipa
