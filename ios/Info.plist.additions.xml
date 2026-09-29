@@ -1,0 +1,15 @@
+<!--
+  Claves a añadir dentro de <dict> en ios/Runner/Info.plist
+  (tool/setup.sh lo hace automáticamente en macOS con PlistBuddy).
+
+  NSBluetoothAlwaysUsageDescription  → obligatorio desde iOS 13 para usar CoreBluetooth.
+  NSBluetoothPeripheralUsageDescription → solo lo leen iOS < 13; inofensivo.
+  No se añade UIBackgroundModes: el control es en primer plano y Apple
+  exige justificar bluetooth-central en revisión.
+-->
+<key>NSBluetoothAlwaysUsageDescription</key>
+<string>Asador usa Bluetooth para conectarse al asador y controlar la velocidad y el sentido del motor.</string>
+<key>NSBluetoothPeripheralUsageDescription</key>
+<string>Asador usa Bluetooth para conectarse al asador y controlar el motor.</string>
+<key>CFBundleDisplayName</key>
+<string>Asador</string>
